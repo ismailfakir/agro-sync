@@ -60,7 +60,7 @@ def get_dht11_temperature():
       temperature = (sensorDH11.temperature())  # In Celsius
       humidity = (sensorDH11.humidity())        # In Percent
       # Print values
-      print("Temperature: {}°C   Humidity: {}%".format(temperature, humidity))
+      #print("Temperature: {}°C   Humidity: {}%".format(temperature, humidity))
       return temperature, humidity
     except OSError as e:
       print("Failed to read sensor.")
@@ -72,9 +72,12 @@ def read_current_time():
         ntptime.settime()  # Synchronize the internal RTC with an NTP server
         rtc = machine.RTC()
         # You can now get the time as a tuple or format it into a string
-        current_time = rtc.datetime() 
-        print(f"Current time: {current_time}") 
+        current_time = rtc.datetime()
+        formater_current_time = f'{current_time[0]}-{current_time[1]}-{current_time[2]}-{current_time[4]}:{current_time[5]}:{current_time[6]}:{current_time[7]}'
+        
+        #print(f"Current time: {formater_current_time}") 
         # Example output format: (year, month, day, weekday, hour, minute, second, subsecond)
+        return formater_current_time
 
     except OSError:
         print("Could not sync with NTP server, using default time (Jan 1, 2021)")
@@ -83,7 +86,7 @@ def read_current_time():
 # Connect to wifi
 wifi_connect()
 #read current time
-read_current_time()
+#read_current_time()
 
 # Set AWS IoT Core connection details
 mqtt = MQTTClient(
@@ -105,15 +108,22 @@ mqtt.subscribe(SUB_TOPIC)
 
 # Main loop - with 15 sec delay
 while True:
+    # device id
+    device_id = machine.unique_id().hex()
     # read dht11 temperature
     tem,hum = get_dht11_temperature()
     # Publisg the temperature & humidity
-    message = b'{"temperature":%s, "humidity":%s}' % (tem, hum)
-    print('Publishing topic %s message %s' % (PUB_TOPIC, message))
+    sensor_data = {"temperature": tem, "humidity": hum, "updated_at": read_current_time(), "device_name": CLIENT_ID, "device_id": device_id}
+    payload = ujson.dumps(sensor_data)
+    # The payload is often encoded to bytes before publishing
+    message = payload.encode('utf-8')
+    print('Publishing topic %s message %s' % (PUB_TOPIC, payload))
+    
     # QoS Note: 0=Sent zero or more times, 1=Sent at least one, wait for PUBACK
     # See https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
-    mqtt.publish(topic=PUB_TOPIC, msg=message, qos=0)
+    mqtt.publish(topic=PUB_TOPIC, msg=payload, qos=0)
 
     # Check subscriptions for message
     mqtt.check_msg()
     time.sleep(15)
+

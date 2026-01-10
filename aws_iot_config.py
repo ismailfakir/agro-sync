@@ -11,7 +11,7 @@ CLIENT_ID = b'RaspberryPiPicoW'
 AWS_ENDPOINT = b'AWS_ENDPOINT.iot.eu-west-1.amazonaws.com'
 
 # AWS IoT Core publish topic
-PUB_TOPIC = b'/' + CLIENT_ID + '/temperature'
+PUB_TOPIC = b'/agrosync/sensordata'
 # AWS IoT Core subscribe  topic
 SUB_TOPIC = b'/' + CLIENT_ID + '/light'
 
