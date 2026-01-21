@@ -85,17 +85,26 @@ def read_current_time():
 
 # Connect to wifi
 wifi_connect()
-#read current time
-#read_current_time()
 
-# Set AWS IoT Core connection details
+# Set HIVEMQ connection details
 mqtt = MQTTClient(
     client_id=CLIENT_ID,
-    server=AWS_ENDPOINT,
+    server=HIVEMQ_URL,
     port=8883,
+    user=HIVEMQ_USER,
+    password=HIVEMQ_USER_PASSWORD,
     keepalive=5000,
     ssl=True,
-    ssl_params={'key':DEV_KEY, 'cert':DEV_CRT, 'server_side':False})
+    ssl_params={'server_hostname': HIVEMQ_URL})
+
+# Set AWS IoT Core connection details
+# mqtt = MQTTClient(
+#     client_id=CLIENT_ID,
+#     server=AWS_ENDPOINT,
+#     port=8883,
+#     keepalive=5000,
+#     ssl=True,
+#     ssl_params={'key':DEV_KEY, 'cert':DEV_CRT, 'server_side':False})
 
 # Establish connection to AWS IoT Core
 mqtt.connect()

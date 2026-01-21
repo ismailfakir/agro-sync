@@ -15,10 +15,15 @@ PUB_TOPIC = b'/agrosync/sensordata'
 # AWS IoT Core subscribe  topic
 SUB_TOPIC = b'/' + CLIENT_ID + '/light'
 
+# HIVEMQ
+HIVEMQ_URL = b'---.hivemq.cloud'
+HIVEMQ_USER = b'user'
+HIVEMQ_USER_PASSWORD = b'pass'
+
 # Reading Thing Private Key and Certificate into variables for later use
-with open('/certs/key.der', 'rb') as f:
-    DEV_KEY = f.read()
+# with open('/certs/key.der', 'rb') as f:
+#     DEV_KEY = f.read()
 # Thing Certificate
-with open('/certs/cert.der', 'rb') as f:
-    DEV_CRT = f.read()
+# with open('/certs/cert.der', 'rb') as f:
+#     DEV_CRT = f.read()
 
